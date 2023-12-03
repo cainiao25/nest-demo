@@ -4,16 +4,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ConfigEnum } from './enum/config.enum';
 import * as dotenv from 'dotenv'
+import Configuration from './configuration';
 
 // const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
+// 通过.env文件判断环境
 
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, //全局可以使用。
       // envFilePath,
       // load: [() => dotenv.config({ path: '.env'})]
+      load: [Configuration]
     }), //.forRoot()是读取根目录的.env文件  isGlobal: true 开启为true就可以全局使用， 可以在private上引用。
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
