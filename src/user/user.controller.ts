@@ -1,8 +1,22 @@
-import { Body, Controller, Get, Post, Req, Res, Session } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Inject,
+    Post,
+    Req,
+    Res,
+    Headers,
+    Session,
+    UnauthorizedException
+} from '@nestjs/common';
 import {UserService} from "./user.service";
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnum } from '../enum/config.enum';
 import * as svgCaptcha from 'svg-captcha'
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
+
 @Controller('user')
 export class UserController {
     // 语法糖， 代表this.userService = new UserSeervice(); 这里是通过private userService: UserService 定义出来了
@@ -10,6 +24,10 @@ export class UserController {
       private userService: UserService,
       private configService: ConfigService
     ) { }
+
+    @Inject(JwtService)
+    private jwtService: JwtService;
+
     @Get()
     getUser(): any {
         // .env的使用
@@ -53,6 +71,32 @@ export class UserController {
         console.log(session, 'session')
         session.count = session.count ? session.count + 1 : 1;
         return session.count;
+    }
+
+    @Get('ttt')
+    ttt(@Headers('authorization') authorization: string, @Res({ passthrough: true}) response: Response) {
+        if(authorization) {
+            try {
+                const token = authorization.split(' ')[1];
+                const data = this.jwtService.verify(token);
+
+                const newToken = this.jwtService.sign({
+                    count: data.count + 1
+                });
+                response.setHeader('token', newToken);
+                return data.count + 1
+            } catch(e) {
+                console.log(e);
+                throw new UnauthorizedException();
+            }
+        } else {
+            const newToken = this.jwtService.sign({
+                count: 1
+            });
+
+            response.setHeader('token', newToken);
+            return 1;
+        }
     }
 
 
