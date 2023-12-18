@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.1",
     "@types/lodash": "^4.14.202",
+    "@types/nodemailer": "^6.4.14",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express-session": "^1.17.3",

@@ -7,9 +7,7 @@ export class Email {
     private transporter: nodemailer.Transporter;
 
     constructor(){
-        // 通过nodemailer的createTransport方法创建这个服务，将config中的参数依次传入
-
-        // 使用 NodeMailer 的 createTransport 方法创建邮件发送服务
+        // 通过nodemailer的createTransport方法创建邮件发送服务，将config中的参数依次传入
         this.transporter = nodemailer.createTransport({
             host: EMAIL.host,
             port: EMAIL.port,
@@ -21,10 +19,14 @@ export class Email {
         });
     }
     // 方法：发送邮件
-    async send(email: string, subject: string = '您的验证码'): Promise<void> {
+    async send(email: string, subject: string = '博客平台邮箱检验提醒'): Promise<void> {
         const code = Math.random().toString().slice(-6);
-        const html = `<p>您的验证码是：<strong>${code}</strong>。</p>`;
-
+        const html =
+            `
+              <div>
+                您本次的验证码是<span style="color:#FFB6C1; font-weight:700; font-size:24px">${code}</span>, 验证码有效期是30分钟 
+              </div>
+            `
         const mailOptions: nodemailer.SendMailOptions = {
             from: `${EMAIL.alias}<${EMAIL.user}>`,
             to: email,
@@ -40,25 +42,5 @@ export class Email {
             throw new Error('邮件发送失败');
         }
     }
-
-
-    // async sendMail(email: string, subject: string): Promise<void> {
-    //     const code = Math.random().toString().slice(-6);
-    //     const html = `<p>您的验证码是：<strong>${code}</strong>。</p>`;
-    //     const options: nodemailer.SendMailOptions = {
-    //         from: `${EMAIL.alias}<${EMAIL.user}>`, // 发件人
-    //         to: email, // 收件人
-    //         subject: subject, // 主题
-    //         html: html, // HTML 内容
-    //     };
-    //
-    //     try {
-    //         const info = await this.transporter.sendMail(options);
-    //         console.log("邮件发送成功", info);
-    //     } catch (error) {
-    //         console.error("邮件发送失败", error);
-    //         throw new Error("邮件发送失败");
-    //     }
-    // }
 
 }
