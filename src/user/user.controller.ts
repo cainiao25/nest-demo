@@ -8,12 +8,13 @@ import {
     Res,
     Headers,
     Session,
-    UnauthorizedException
+    UnauthorizedException,
+    HttpException,
+    HttpStatus,
 } from '@nestjs/common';
 import {UserService} from "./user.service";
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnum } from '../enum/config.enum';
-import * as svgCaptcha from 'svg-captcha'
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 
@@ -22,7 +23,7 @@ export class UserController {
     // 语法糖， 代表this.userService = new UserSeervice(); 这里是通过private userService: UserService 定义出来了
     constructor(
       private userService: UserService,
-      private configService: ConfigService
+      private configService: ConfigService,
     ) { }
 
     @Inject(JwtService)
@@ -99,5 +100,13 @@ export class UserController {
         }
     }
 
+    @Post('send-verification-email')
+    async sendVerificationEmail(@Body('email') email: string) {
+        if(!email){
+            throw ('缺少必要的邮件参数');
+        }
+        await this.userService.sendUserVerificationEmail(email);
+        return { message: '验证码邮件已发送' };
+    }
 
 }
