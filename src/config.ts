@@ -1,6 +1,6 @@
 export const EMAIL = {
         // 别名，自己定义
-        alias: "博客",
+        alias: "火山博客",
         // 邮件服务器地址
         host: "smtp.163.com",
         // 邮件服务器端口

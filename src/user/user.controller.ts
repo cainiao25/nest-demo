@@ -101,12 +101,14 @@ export class UserController {
     }
 
     @Post('send-verification-email')
-    async sendVerificationEmail(@Body('email') email: string) {
+    async email(@Body('email') email: string) {
         if(!email){
             throw ('缺少必要的邮件参数');
         }
-        await this.userService.sendUserVerificationEmail(email);
-        return { message: '验证码邮件已发送' };
+        await this.userService.sendVerificationEmail(email);
+        return {
+            message: '验证码邮件已发送',
+        };
     }
 
 }

@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { EmailService } from '../tools/EmailTool/EmailService'; // 引入 Email 类
 
 
+
 @Module({
   imports:[
     JwtModule.registerAsync({
@@ -17,9 +18,12 @@ import { EmailService } from '../tools/EmailTool/EmailService'; // 引入 Email 
           }
         }
       }
-    })
+    }),
   ],
   controllers: [UserController],
-  providers: [UserService, EmailService],
+  providers: [
+    UserService,
+    EmailService,
+  ],
 })
 export class UserModule {}
