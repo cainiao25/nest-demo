@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import * as svgCaptcha from 'svg-captcha'
-import { Email } from '../tools/EmailTool';
+import { EmailService } from '../tools/EmailTool/EmailService';
 /**
  * 这里是提供给user的一些api
  */
 @Injectable()
 export class UserService {
-    constructor(private readonly emailTool: Email) {}
+    constructor(private readonly emailTool: EmailService) {}
     /**
      * 获取用户信息
      */
@@ -47,7 +47,7 @@ export class UserService {
      * @param email {string} - 需要发送的邮箱
      */
     async sendUserVerificationEmail(email: string) {
-        await this.emailTool.send(email);
+        await this.emailTool.sendEmailCode(email);
     }
 
 

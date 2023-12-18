@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { JwtModule } from '@nestjs/jwt';
-import { Email } from '../tools/EmailTool'; // 引入 Email 类
+import { EmailService } from '../tools/EmailTool/EmailService'; // 引入 Email 类
 
 
 @Module({
@@ -20,6 +20,6 @@ import { Email } from '../tools/EmailTool'; // 引入 Email 类
     })
   ],
   controllers: [UserController],
-  providers: [UserService, Email],
+  providers: [UserService, EmailService],
 })
 export class UserModule {}
