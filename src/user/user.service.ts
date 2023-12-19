@@ -53,15 +53,16 @@ export class UserService {
             // 这里填充EJS模板所需的数据
             code,
             date: new Date().toLocaleString(),
-            sign: '系统邮件,回复无效。'
+            sign: '系统邮件,回复无效。',
+            link:'www.baidu.com' //链接地址
         };
 
         try {
             await this.emailTool.sendEmail({
-                email: email,
+                email,
                 subject: '邮箱验证',
                 template: 'validate.code.ejs', // EJS模板文件名
-                context: context
+                context
             });
 
             return { success: true, message: '验证邮件已发送' };
