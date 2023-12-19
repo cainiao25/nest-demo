@@ -18,6 +18,12 @@ import { ConfigEnum } from '../enum/config.enum';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 
+/**
+ * session类型
+ */
+interface MySession {
+    code?: string;
+}
 @Controller('user')
 export class UserController {
     // 语法糖， 代表this.userService = new UserSeervice(); 这里是通过private userService: UserService 定义出来了
@@ -28,6 +34,7 @@ export class UserController {
 
     @Inject(JwtService)
     private jwtService: JwtService;
+
 
     @Get()
     getUser(): any {
@@ -49,8 +56,13 @@ export class UserController {
         return this.userService.addUser()
     }
 
+
     @Get('code')
-    createCaptcha(@Req() req, @Res() res, @Session() session) {
+    createCaptcha(
+      @Req() req:Request,
+      @Res() res:Response,
+      @Session() session:MySession
+    ) {
         const Captcha = this.userService.captchaArrangement();
 
         session.code = Captcha.text
@@ -60,7 +72,10 @@ export class UserController {
     }
 
     @Post('create')
-    createUser (@Body() Body, @Session() session){
+    createUser (
+      @Body() Body:any,
+      @Session() session:MySession
+    ){
         console.log(Body, session.code);
         return {
             code: 200,
