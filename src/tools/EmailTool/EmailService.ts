@@ -2,7 +2,7 @@ import * as nodemailer from 'nodemailer';
 import * as ejs from 'ejs';
 import * as path from 'path';
 import { Injectable } from '@nestjs/common';
-import { EMAIL } from "../../config"
+import { EMAIL } from "./config"
 
 @Injectable()
 export class EmailService {

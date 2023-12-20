@@ -18,6 +18,8 @@ import { ConfigEnum } from '../enum/config.enum';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 
+
+
 /**
  * session类型
  */
@@ -118,7 +120,7 @@ export class UserController {
     @Post('send-verification-email')
     async email(@Body('email') email: string) {
         if(!email){
-            throw ('缺少必要的邮件参数');
+            throw new HttpException('缺少必要的邮件参数', 400);
         }
         await this.userService.sendVerificationEmail(email);
         return {

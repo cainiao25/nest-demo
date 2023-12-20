@@ -6,9 +6,6 @@ import { ConfigEnum } from './enum/config.enum';
 import * as dotenv from 'dotenv'
 import Configuration from './configuration';
 import * as Joi from 'joi'
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-import { RequestInterceptor } from './common/interceptors/request.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 // const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
 // 通过.env文件判断环境
 
@@ -55,15 +52,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     }),
   ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: RequestInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}
