@@ -1,73 +1,30 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 如何使用 ValidationPipe 验证 post 请求参数 
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 关于包引用的方式
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### 第一种方法（主引导文件中设置）:
+* 在应用程序的主引导文件（通常是main.ts）中，通过调用app.useGlobalPipes()方法直接将ValidationPipe设置为全局管道。
+* 这意味着无论在哪个模块中，所有进入应用程序的输入数据都将通过这个ValidationPipe进行验证。
+* 这是一种快速而便捷的方式，在小型或者中等规模的应用程序中使用非常普遍。
+* 它允许开发者在应用程序启动时立即声明全局管道，不需要修改任何其他模块或服务。 
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 第二种方法（模块提供者中设置）:
+* 在AppModule或其他任何模块的providers数组中，通过使用APP_PIPE令牌（一个NestJS内部常量），将ValidationPipe设置为全局管道。
+* 这种方法更加显式，它使用了NestJS的依赖注入系统，通过提供者来设置管道。
+* 这种方法更加模块化，可以更容易地控制管道的作用范围，特别是当你有多个模块并希望在特定模块中应用全局管道时。
+* 它也可以让测试变得更容易，因为你可以在测试期间更容易地替换或者移除这个管道。
+* 在选择使用哪种方法时，需要根据具体的应用程序需求和偏好来决定。如果你希望在整个应用程序中无缝地应用验证，并且不需要在不同的模块中有不同的验证策略，那么第一种方法会更简单直接。但是，如果你需要更多的控制能力，或者你正在构建一个大型、模块化的应用程序，那么第二种方法可能更适合你的需求。
 
-## Installation
+## 小结
+在NestJS中，`ValidationPipe`确实是一个用于验证请求数据的管道，通常使用类验证器（class-validator）包和类转换器（class-transformer）包来实现。其主要作用是确保传入的数据满足你的DTO（Data Transfer Object）规范。选择将其放置在`main.ts`文件中或作为模块的提供者主要取决于你的应用架构和个人偏好。
 
-```bash
-$ yarn install
-```
+`将ValidationPipe`放在`main.ts`中的优势在于简洁性和一致性：
 
-## Running the app
+* `简洁性:` 在main.ts中设置全局管道可以用几行代码轻松完成，而且这是一个集中的位置，使得管理和查找相关配置变得容易。
 
-```bash
-# development
-$ yarn run start
+* `一致性:` 设置为全局管道意味着它会自动应用于你的应用程序中的每个模块和路由处理程序，无需在其他地方重复配置。
 
-# watch mode
-$ yarn run start:dev
+然而，如果你的应用程序非常大，并且你想要根据每个模块或特定路由来有选择性地应用`ValidationPipe`，或者你希望能够在测试时轻松地替换或移除它，那么将`ValidationPipe`作为模块的提供者可能更合适。这种方法提供了更高的灵活性，但可能会稍微复杂一些，因为你需要确保正确地配置了`APP_PIPE`提供者。
 
-# production mode
-$ yarn run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+在大多数情况下，如果你希望整个应用程序中都统一使用ValidationPipe并且不需要在不同模块之间进行细粒度的控制，那么在main.ts中设置全局管道是一个好选择。这通常是NestJS应用程序的推荐做法，因为它简化了配置，并且可以确保所有的输入数据都经过了验证。
