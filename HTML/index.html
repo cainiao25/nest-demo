@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件上传-multer</title>
+  <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+</head>
+<body>
+
+<div>
+  <input id="fileInput" type="file" multiple/>
+  <p>单文件上传</p>
+</div>
+
+<div>
+  <input id="fileInput_pipe" type="file" multiple/>
+  <p>单文件上传- pipe自定义校验规则</p>
+</div>
+
+<div>
+  <input id="fileInput_nest_built" type="file" multiple/>
+  <p>单文件上传- 使用nest内置校验规则</p>
+</div>
+
+<div>
+  <input id="multiple_fileInput" type="file" multiple/>
+  <p>多文件上传</p>
+</div>
+
+<div>
+  <input id="multipleFields_fileInput" type="file" multiple/>
+  <p>多文件上传-多个文件的字段</p>
+</div>
+
+<div>
+  <input id="AnyFilesInterceptorDemo" type="file" multiple/>
+  <p>多文件上传-如果并不知道有哪些字段是 file 可以使用 AnyFilesInterceptor</p>
+</div>
+<script>
+  const fileInput = document.querySelector('#fileInput');
+  const multiple_fileInput = document.querySelector('#multiple_fileInput');
+  const multipleFields_fileInput = document.querySelector('#multipleFields_fileInput');
+  const AnyFilesInterceptorDemo = document.querySelector('#AnyFilesInterceptorDemo');
+  const fileInput_pipe = document.querySelector('#fileInput_pipe');
+  const fileInput_nest_built = document.querySelector('#fileInput_nest_built');
+
+
+
+
+  /**
+   * 单文件上传
+   * @returns {Promise<void>}
+   */
+  async function formData() {
+    const data = new FormData();
+    data.set('mes','单文件上传');
+    data.set('entering', '200');
+    data.set('upload', fileInput.files[0]);
+
+    const res = await axios.post('http://localhost:3000/single_file_upload', data);
+    console.log(res);
+  }
+
+  /**
+   * 单文件上传 - 使用pipe自定义校验规则
+   * @returns {Promise<void>}
+   */
+  async function formData_pipe() {
+    const data = new FormData();
+    data.set('mes','单文件上传');
+    data.set('entering', '200');
+    data.set('upload', fileInput_pipe.files[0]);
+
+    const res = await axios.post('http://localhost:3000/pie_customize_file_uploads', data);
+    console.log(res);
+  }
+
+  /**
+   * 单文件上传 - 使用nest内置校验规则
+   * @returns {Promise<void>}
+   */
+  async function formData_nest_built() {
+    const data = new FormData();
+    data.set('mes','单文件上传');
+    data.set('entering', '200');
+    data.set('upload', fileInput_nest_built.files[0]);
+
+    const res = await axios.post('http://localhost:3000/nest_built_verify_file_uploads', data);
+    console.log(res);
+  }
+
+
+
+  /**
+   * 多文件上传
+   * @returns {Promise<void>}
+   */
+  async function formDataMultiple() {
+    const data = new FormData();
+    data.set('mes','多文件上传');
+    data.set('entering', '200');
+    [...multiple_fileInput.files].forEach(item => {
+      data.append('upload', item)
+    })
+
+
+    const res = await axios.post('http://localhost:3000/multi_file_uploads', data, {
+      headers: { 'content-type': 'multipart/form-data' }
+    });
+  }
+
+  /**
+   * 多个文件的字段
+   * @returns {Promise<void>}
+   */
+  async function formDatamultipleFields() {
+    const data = new FormData();
+    data.set('mes','多个文件的字段');
+    data.set('age', 20);
+    data.append('aaa', multipleFields_fileInput.files[0]);
+    data.append('aaa', multipleFields_fileInput.files[1]);
+    data.append('bbb', multipleFields_fileInput.files[2]);
+    data.append('bbb', multipleFields_fileInput.files[3]);
+
+    const res = await axios.post('http://localhost:3000/multipleFields_file_uploads', data);
+    console.log(res);
+  }
+
+  /**
+   * 如果并不知道有哪些字段是 file 可以使用 AnyFilesInterceptor
+   * @returns {Promise<void>}
+   */
+  async function formDataAnyFilesInterceptorDemo() {
+    const data = new FormData();
+    data.set('name','光');
+    data.set('age', 20);
+    data.set('aaa', AnyFilesInterceptorDemo.files[0]);
+    data.set('bbb', AnyFilesInterceptorDemo.files[1]);
+    data.set('ccc', AnyFilesInterceptorDemo.files[2]);
+    data.set('ddd', AnyFilesInterceptorDemo.files[3]);
+
+    const res = await axios.post('http://localhost:3000/AnyFilesInterceptor', data);
+    console.log(res);
+  }
+
+
+  fileInput.onchange = formData;
+  fileInput_pipe.onchange = formData_pipe;
+  fileInput_nest_built.onchange = formData_nest_built;
+  multiple_fileInput.onchange = formDataMultiple;
+  multipleFields_fileInput.onchange = formDatamultipleFields;
+  AnyFilesInterceptorDemo.onchange = formDataAnyFilesInterceptorDemo;
+
+
+</script>
+</body>
+</html>

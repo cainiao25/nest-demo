@@ -1,7 +1,7 @@
 import {
   Body,
   Controller, FileTypeValidator,
-  Get, MaxFileSizeValidator,
+  Get, HttpException, MaxFileSizeValidator,
   ParseFilePipe,
   Post,
   UploadedFile,
@@ -17,6 +17,7 @@ import {
 } from '@nestjs/platform-express';
 import { storage } from './tools/fileUpload/storage';
 import { FileSizeValidationPipe } from './file-size-validation-pipe.pipe';
+import { MyFileValidator } from './tools/fileUpload/myFileValidator';
 
 @Controller()
 export class AppController {
@@ -108,21 +109,21 @@ export class AppController {
 
   /**
    * 指定 storage
-   * @param file
+   * @param files
    * @param body
    */
-  // @Post('AnyFilesInterceptor_specifyStorage')
-  //
-  // @UseInterceptors(AnyFilesInterceptor({
-  //   storage: storage
-  // }))
-  // uploadAnyFiles
-  // (@UploadedFiles() files: Array<Express.Multer.File>,
-  // @Body() body
-  // ) {
-  //   console.log('body', body);
-  //   console.log('files', files);
-  // }
+  @Post('AnyFilesInterceptor_specifyStorage')
+
+  @UseInterceptors(AnyFilesInterceptor({
+    storage: storage
+  }))
+  uploadAnyFiles2
+  (@UploadedFiles() files: Array<Express.Multer.File>,
+  @Body() body: ParameterDecorator
+  ) {
+    console.log('body', body);
+    console.log('files', files);
+  }
 
   /**
    * 使用pipe自定义上传文件校验规则
@@ -142,7 +143,7 @@ export class AppController {
   }
 
   /**
-   * 使用nest内置功能进行校验
+   * 使用nest内置功能进行校验 调用传入的 validator 来对文件做校验
    * @param file
    * @param body
    */
@@ -151,9 +152,32 @@ export class AppController {
     dest: 'uploads'
   }))
   uploadFile3(@UploadedFile(new ParseFilePipe({
+    // 调用传入的 validator 来对文件做校验
+    exceptionFactory: error => {
+      throw new HttpException('xxx' + error, 404)
+    },
     validators: [
       new MaxFileSizeValidator({ maxSize: 1000 }),
       new FileTypeValidator({ fileType: 'image/jpeg' }),
+    ],
+  })) file: Express.Multer.File, @Body() body:  ParameterDecorator) {
+    console.log('body', body);
+    console.log('file', file);
+  }
+
+  /**
+   * 使用nest内置功能进行校验 自己实现这样的 validator，只要继承 FileValidator 就可以：
+   * @param file
+   * @param body
+   */
+  @Post('nest_built_verify_file_uploads_2')
+  @UseInterceptors(FileInterceptor('upload', {
+    dest: 'uploads'
+  }))
+  uploadFile4(@UploadedFile(new ParseFilePipe({
+    // 自己实现这样的 validator，只要继承 FileValidator 就可以：
+    validators: [
+     new MyFileValidator({})
     ],
   })) file: Express.Multer.File, @Body() body:  ParameterDecorator) {
     console.log('body', body);
